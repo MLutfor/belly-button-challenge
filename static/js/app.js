@@ -155,57 +155,114 @@ function displayMetadata(metadata) {
   // Call the init function to initialize the dropdown, bar chart, bubble chart, and display initial metadata
   init();
   
-// Function to create the gauge chart
-function createGaugeChart(wfreq) {
-    var data = [
-      {
-        domain: { x: [0, 1], y: [0, 1] },
-        value: wfreq,
-        title: { text: "Belly Button Washing Frequency<br>Scrubs per Week" },
-        type: "indicator",
-        mode: "gauge+number",
-        gauge: {
-          axis: { range: [null, 9], tickwidth: 1, tickcolor: "darkblue" },
-          bar: { color: "darkblue" },
-          bgcolor: "white",
-          borderwidth: 2,
-          bordercolor: "gray",
-          steps: [
-            { range: [0, 1], color: "rgba(0, 105, 11, .1)" },
-            { range: [1, 2], color: "rgba(0, 105, 11, .3)" },
-            { range: [2, 3], color: "rgba(0, 105, 11, .5)" },
-            { range: [3, 4], color: "rgba(0, 105, 11, .7)" },
-            { range: [4, 5], color: "rgba(0, 105, 11, .9)" },
-            { range: [5, 6], color: "rgba(0, 105, 11, .9)" },
-            { range: [6, 7], color: "rgba(0, 105, 11, .9)" },
-            { range: [7, 8], color: "rgba(0, 105, 11, .9)" },
-            { range: [8, 9], color: "rgba(0, 105, 11, 1)" }
-          ],
-        }
-      }
-    ];
-  
-    var layout = { width: 500, height: 400, margin: { t: 20, b: 40, l: 40, r: 40 } };
-  
-    Plotly.newPlot('gauge', data, layout);
-  }
-  
-  // Adjusted optionChanged function to update the bar chart, bubble chart, display metadata, and gauge chart
-  function optionChanged(selectedValue) {
-    d3.json(url).then(data => {
-      const sample = data.samples.find(sample => sample.id === selectedValue);
-      createBarChart(sample);
-      createBubbleChart(sample);
-      
-      const metadata = data.metadata.find(item => item.id.toString() === selectedValue);
-      displayMetadata(metadata); // Display metadata
-      
-      const wfreq = metadata.wfreq;
-      createGaugeChart(wfreq); // Display gauge chart
-    });
-  }
-  
-  // ... (Rest of the code remains unchanged)
-  
 
-  
+// Function to create the gauge chart
+function createCustomGaugeChart(wfreq) {
+  // Enter the value for the washing frequency (0 through 9)
+  var level = parseFloat(wfreq) * 20;
+
+  // Trig to calc meter point
+  var degrees = 180 - level,
+    radius = 0.5;
+  var radians = (degrees * Math.PI) / 180;
+  var x = radius * Math.cos(radians);
+  var y = radius * Math.sin(radians);
+
+  // Path: may have to change to create a better triangle
+  var mainPath = 'M -.0 -0.05 L .0 0.05 L ',
+    pathX = String(x),
+    space = ' ',
+    pathY = String(y),
+    pathEnd = ' Z';
+  var path = mainPath.concat(pathX, space, pathY, pathEnd);
+
+  var data = [
+    {
+      type: 'scatter',
+      x: [0],
+      y: [0],
+      marker: { size: 14, color: '850000' },
+      showlegend: false,
+      name: 'Wash Freq',
+      text: wfreq,
+      hoverinfo: 'text+name'
+    },
+    {
+      values: [50 / 9, 50 / 9, 50 / 9, 50 / 9, 50 / 9, 50 / 9, 50 / 9, 50 / 9, 50 / 9, 50],
+      rotation: 90,
+      text: ['8-9', '7-8', '6-7', '5-6', '4-5', '3-4', '2-3', '1-2', '0-1', ''],
+      textinfo: 'text',
+      textposition: 'inside',
+      marker: {
+        colors: [
+          'rgba(0, 105, 11, .5)',
+          'rgba(10, 120, 22, .5)',
+          'rgba(14, 127, 0, .5)',
+          'rgba(110, 154, 22, .5)',
+          'rgba(170, 202, 42, .5)',
+          'rgba(202, 209, 95, .5)',
+          'rgba(210, 206, 145, .5)',
+          'rgba(232, 226, 202, .5)',
+          'rgba(240, 230, 215, .5)',
+          'rgba(255, 255, 255, 0)'
+        ]
+      },
+      labels: ['8-9', '7-8', '6-7', '5-6', '4-5', '3-4', '2-3', '1-2', '0-1',' '],
+      hoverinfo: 'none',
+      
+
+      hole: 0.5,
+      type: 'pie',
+      showlegend: false
+    }
+  ];
+
+  var layout = {
+    shapes: [
+      {
+        type: 'path',
+        path: path,
+        fillcolor: '850000',
+        line: { color: '850000' }
+      }
+    ],
+    title: '<b>Belly Button Washing Frequency</b> <br> Scrubs per Week',
+    height: 400,
+    width: 400,
+    xaxis: {
+      zeroline: false,
+      showticklabels: false,
+      showgrid: false,
+      range: [-1, 1]
+    },
+    yaxis: {
+      zeroline: false,
+      showticklabels: false,
+      showgrid: false,
+      range: [-1, 1]
+    }
+  };
+
+  Plotly.newPlot('gauge', data, layout);
+}
+
+
+ //Call the function to create the custom gauge chart with wfreq value
+function createGaugeChart(wfreq) {
+  createCustomGaugeChart(wfreq);
+}
+
+// Adjusted optionChanged function to update the bar chart, bubble chart, display metadata, and gauge chart
+function optionChanged(selectedValue) {
+  d3.json(url).then(data => {
+    const sample = data.samples.find(sample => sample.id === selectedValue);
+    createBarChart(sample);
+    createBubbleChart(sample);
+    
+    const metadata = data.metadata.find(item => item.id.toString() === selectedValue);
+    displayMetadata(metadata); // Display metadata
+    
+    const wfreq = metadata.wfreq;
+    createGaugeChart(wfreq); // Display gauge chart with wfreq value
+  });
+}
