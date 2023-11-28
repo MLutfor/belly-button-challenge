@@ -12,7 +12,10 @@ function createBarChart(data) {
     y: otuIds,
     text: otuLabels,
     type: 'bar',
-    orientation: 'h'
+    orientation: 'h',
+    marker: {
+      color: 'rgb(134, 191, 127)' // Set the bar color to rgb(3, 52, 49)
+    }
   };
 
   const layout = {
@@ -188,6 +191,7 @@ function createCustomGaugeChart(wfreq) {
       hoverinfo: 'text+name'
     },
     {
+      //50 at the tail end of the left side represent the blank half of the circle.  50/9 represents each portion of the visible arch.
       values: [50 / 9, 50 / 9, 50 / 9, 50 / 9, 50 / 9, 50 / 9, 50 / 9, 50 / 9, 50 / 9, 50],
       rotation: 90,
       text: ['8-9', '7-8', '6-7', '5-6', '4-5', '3-4', '2-3', '1-2', '0-1', ''],
@@ -207,6 +211,8 @@ function createCustomGaugeChart(wfreq) {
           'rgba(255, 255, 255, 0)'
         ]
       },
+
+      //' ' is the blank half of the circle.
       labels: ['8-9', '7-8', '6-7', '5-6', '4-5', '3-4', '2-3', '1-2', '0-1',' '],
       hoverinfo: 'none',
       
