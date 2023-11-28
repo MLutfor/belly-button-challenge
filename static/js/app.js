@@ -27,32 +27,12 @@ function createBarChart(data) {
   const chartData = [trace];
 
   Plotly.newPlot('bar', chartData, layout);
-}
+  }
 
-// Function to handle dropdown change event
-function optionChanged(selectedValue) {
-  d3.json(url).then(data => {
-    const sample = data.samples.find(sample => sample.id === selectedValue);
-    createBarChart(sample);
-  });
-}
 
-// Function to initialize the dropdown
-function init() {
-  const dropdown = d3.select('#selDataset');
 
-  d3.json(url).then(data => {
-    data.names.forEach(name => {
-      dropdown.append('option').text(name).property('value', name);
-    });
 
-    const initialSample = data.samples[0];
-    createBarChart(initialSample);
-  });
-}
 
-// Call the init function to initialize the dropdown and chart
-init();
 
 // Function to create the bubble chart
 function createBubbleChart(data) {
@@ -88,32 +68,8 @@ function createBubbleChart(data) {
     Plotly.newPlot('bubble', chartData, layout);
   }
   
-  // Adjusted optionChanged function to update the bubble chart
-  function optionChanged(selectedValue) {
-    d3.json(url).then(data => {
-      const sample = data.samples.find(sample => sample.id === selectedValue);
-      createBarChart(sample);
-      createBubbleChart(sample); // Call the function to update the bubble chart
-    });
-  }
+
   
-  // Adjusted init function to initially render the bubble chart
-  function init() {
-    const dropdown = d3.select('#selDataset');
-  
-    d3.json(url).then(data => {
-      data.names.forEach(name => {
-        dropdown.append('option').text(name).property('value', name);
-      });
-  
-      const initialSample = data.samples[0];
-      createBarChart(initialSample);
-      createBubbleChart(initialSample); // Call the function to initially render the bubble chart
-    });
-  }
-  
-  // Call the init function to initialize the dropdown, bar chart, and bubble chart
-  init();
 
 // Function to display sample metadata
 function displayMetadata(metadata) {
@@ -125,38 +81,8 @@ function displayMetadata(metadata) {
     });
   }
   
-  // Adjusted optionChanged function to update the bar chart, bubble chart, and display metadata
-  function optionChanged(selectedValue) {
-    d3.json(url).then(data => {
-      const sample = data.samples.find(sample => sample.id === selectedValue);
-      createBarChart(sample);
-      createBubbleChart(sample);
-      
-      const metadata = data.metadata.find(item => item.id.toString() === selectedValue);
-      displayMetadata(metadata); // Display metadata
-    });
-  }
+
   
-  // Adjusted init function to initially render the bar chart, bubble chart, and display initial metadata
-  function init() {
-    const dropdown = d3.select('#selDataset');
-  
-    d3.json(url).then(data => {
-      data.names.forEach(name => {
-        dropdown.append('option').text(name).property('value', name);
-      });
-  
-      const initialSample = data.samples[0];
-      createBarChart(initialSample);
-      createBubbleChart(initialSample);
-      
-      const initialMetadata = data.metadata[0];
-      displayMetadata(initialMetadata); // Display initial metadata
-    });
-  }
-  
-  // Call the init function to initialize the dropdown, bar chart, bubble chart, and display initial metadata
-  init();
   
 
 // Function to create the gauge chart
@@ -252,6 +178,29 @@ function createCustomGaugeChart(wfreq) {
   Plotly.newPlot('gauge', data, layout);
 }
 
+// Function to initialize the dropdown, bar chart, bubble chart, metadata, and gauge chart
+function initialize() {
+  const dropdown = d3.select('#selDataset');
+
+  d3.json(url).then(data => {
+    data.names.forEach(name => {
+      dropdown.append('option').text(name).property('value', name);
+    });
+
+    const initialSample = data.samples[0];
+    createBarChart(initialSample);
+    createBubbleChart(initialSample);
+
+    const initialMetadata = data.metadata[0];
+    displayMetadata(initialMetadata); // Display initial metadata
+
+    const initialWfreq = initialMetadata.wfreq; // Get initial wfreq
+    createGaugeChart(initialWfreq); // Display gauge chart with initial wfreq
+  });
+}
+
+// Call the initialize function to initialize the dropdown, charts, metadata, and gauge chart
+initialize();
 
  //Call the function to create the custom gauge chart with wfreq value
 function createGaugeChart(wfreq) {
@@ -272,3 +221,6 @@ function optionChanged(selectedValue) {
     createGaugeChart(wfreq); // Display gauge chart with wfreq value
   });
 }
+
+
+
