@@ -14,7 +14,7 @@ function createBarChart(data) {
     type: 'bar',
     orientation: 'h',
     marker: {
-      color: 'rgb(134, 191, 127)' // Set the bar color to rgb(3, 52, 49)
+      color: 'rgb(134, 191, 127)' 
     }
   };
 
